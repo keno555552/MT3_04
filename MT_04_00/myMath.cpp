@@ -109,6 +109,12 @@ float Dot(const Vector3& V1, const Vector3& V2) {
 	return V1.x * V2.x + V1.y * V2.y + V1.z * V2.z;
 }
 
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	return { (v1.y * v2.z) - (v1.z * v2.y),
+			 (v1.z * v2.x) - (v1.x * v2.z),
+			 (v1.x * v2.y) - (v1.y * v2.x) };
+}
+
 float Length(const Vector3& v) {
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
@@ -1118,16 +1124,41 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment) {
 
 
 #pragma region Other
+
 bool BinaryComparator(int binary, int target) {
 	if (binary == (target & binary)) {
 		return true;
 	}
 	return false;
 }
-Vector3 Cross(const Vector3& v1, const Vector3& v2) {
-	return { (v1.y * v2.z) - (v1.z * v2.y),
-			 (v1.z * v2.x) - (v1.x * v2.z),
-			 (v1.x * v2.y) - (v1.y * v2.x) };
+
+Vector3 uniformCircularMotion(Vector3 center, float radius, float time, float maxtime, CircleMotionPlane plane) {
+	center;
+	Vector3 result = {};
+	
+	float omega = 2.0f * M_PI / maxtime; // 角速度を計算
+	float nowAngle = omega * time; // 現在の角度を計算
+
+	if (plane == CircleMotionPlane::XY) {
+		result.x =  -std::sin(nowAngle) * radius * omega;
+		result.y =   std::cos(nowAngle) * radius * omega;
+		result.z = 0;  // Z座標は変化しない
+		return result + center;
+	}
+	if (plane == CircleMotionPlane::XZ) {
+		result.x = -std::sin(nowAngle) * radius * omega;
+		result.z =	std::cos(nowAngle) * radius * omega;
+		result.y = 0;  // y座標は変化しない		    
+		return result + center;				    
+	}										    
+	if (plane == CircleMotionPlane::YZ) {	    
+		result.y = -std::sin(nowAngle) * radius * omega;
+		result.z =	std::cos(nowAngle) * radius * omega;
+		result.x = 0;  // x座標は変化しない
+		return result + center;
+	}
+	return Vector3();
 }
+
 #pragma endregion
 

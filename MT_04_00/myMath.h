@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <assert.h>
 #include <math.h>
+#include <cmath>
 #define M_PI 3.14159265358979323846f
 
 ///by keno v1.35
@@ -64,6 +65,14 @@ Vector3 Multiply(const float& scalar, const Vector3& v);
 
 // 内積
 float Dot(const Vector3& v1, const Vector3& v2);
+
+/// <summary>
+/// cross積を求める
+/// </summary>
+/// <param name="v1">線A</param>
+/// <param name="v2">線B</param>
+/// <returns></returns>
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 // 長さ（ノルム）
 float Length(const Vector3& v);
@@ -519,13 +528,13 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 /// <returns>=ならtrue</returns>
 bool BinaryComparator(int binary, int target);
 
-/// <summary>
-/// cross積を求める
-/// </summary>
-/// <param name="v1">線A</param>
-/// <param name="v2">線B</param>
-/// <returns></returns>
-Vector3 Cross(const Vector3& v1, const Vector3& v2);
+enum CircleMotionPlane {
+	XY, //<<< XY平面
+	XZ, //<<< XZ平面
+	YZ  //<<< YZ平面
+};
+
+Vector3 uniformCircularMotion(Vector3 center,float radius,float time,float maxtime, CircleMotionPlane plane);
 
 
 #pragma endregion

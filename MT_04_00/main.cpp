@@ -29,25 +29,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 初期化
 	///=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
+	/// 回転設定
+	Vector3 center = { 0.0f,0.0f,0.0f };
+	float radius = 0.8f;///回転半径
+	int eachCircleTime = 2;///1周するのにかかる時間(秒)
 
-	// インスタンス生成と初期化
-	Spring spring{};
-	spring.anchor = { 0.0f, 0.0f, 0.0f };
-	spring.naturalLength = 1.0f;
-	spring.stiffness = 100.0f;
-	spring.dampingCoefficient = 2.0f;
-
-	Ball ball{};
-	ball.position = { 1.2f, 0.0f, 0.0f };
-	ball.mass = 2.0f;
+	/// Sphere
+	Sphere ball;
+	ball.center = { radius, 0.0f, 0.0f };
 	ball.radius = 0.05f;
-	ball.color = BLUE;
 
-	spring.end.acceleration = ball.acceleration;
-	spring.end.color = ball.color;
-	spring.end.mass = ball.mass;
-	spring.end.position = ball.position;
-	spring.end.velocity = ball.velocity;
+	/// Time
+	int time = 0;
+	int maxTime = 60 * eachCircleTime;
 
 	///カメラ初期化
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
@@ -87,7 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///=========================================================================================================================================================================================
 		/// 更新処理
 		///=========================================================================================================================================================================================
-		
+
+
 		///カメラ更新処理
 		cameraMatix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 		cameraViewMatrix = Inverse(cameraMatix);
@@ -95,12 +90,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cameraWorldViewProjectionMatrix = cameraViewMatrix * cameraProjectionMatrix;
 		cameraViewportMatrix = MakeViewportMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		springUpdate(&spring);
-		ball.acceleration	= spring.end.acceleration ;
-		ball.mass			= spring.end.mass		  ;
-		ball.position		= spring.end.position	  ;
-		ball.velocity		= spring.end.velocity	  ;
+		/// Timer更新処理
+		if (time == maxTime) { time = 0; } else { time++; }
 
+		/// bollの回転処理
+		ball.center = ball.center + uniformCircularMotion(center, radius, float(time),float(maxTime), XY);
 
 		///=========================================================================================================================================================================================
 		/// 描画処理
@@ -110,18 +104,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(cameraWorldViewProjectionMatrix, cameraViewportMatrix);
 
 		/// DrawSpring
-		DrawSphere({ ball.position, ball.radius }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, ball.color);
-		Draw3DLine({spring.anchor,spring.end.position - spring.anchor }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
+		DrawSphere({ ball.center, ball.radius }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
 
 		/// ImGui
 		ImGui::Begin("Control Penol");
+		//ImGui::SliderFloat3("ball.center", &ball.center.x, 0.0f, 2.0f);
+		//ImGui::SliderFloat3("center", &center.x, 0.0f, 2.0f);
+		//ImGui::SliderFloat("Radius", &radius, 0.0f, 2.0f);
 		if (ImGui::Button("Start")) {
-			spring.end.position = { 1.2f, 0.0f, 0.0f };
-			spring.end.mass = 2.0f;
-			spring.end.color = BLUE;
-			spring.end.velocity = { 0.0f,0.0f,0.0f };
+			ball.center = { radius, 0.0f, 0.0f };
+			time = 0;
 		}
-
 		ImGui::End();
 
 		/// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
