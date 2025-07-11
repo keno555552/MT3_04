@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "myMath.h"
+#include "crashDecision.h"
 
 static const float deltaTime = 1.0f / 60.0f;
 
@@ -54,3 +55,8 @@ Vector3 PendulumUpdate(Pendulum* pendulum);
 /// 更新予定:出力をVector3に変更、よって計算の操作性をより高まる
 void conicalPendulumUpdate(ConicalPendulum* pendulum);
 
+#pragma region 反射
+
+Vector3 Reflect(Ball* ball, Plane* plane);
+
+#pragma endregion

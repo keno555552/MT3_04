@@ -21,6 +21,12 @@ struct OBB final {
 	Vector3 size;
 };
 
+struct Capsule final {
+	Vector3 start;
+	Vector3 end;
+	float radius;
+};
+
 /// <summary>
 /// Draw HitBox
 /// </summary>
@@ -43,9 +49,11 @@ extern void DrawHitBox(float posX, float posY, float width, float height, unsign
 /// <param name="HitBox Width"></param>
 /// <param name="HitBox Height"></param>
 /// <param name="color"></param>
-extern void DrawAABB(const AABB& aabb,const Matrix4x4& viewProjectionMatrix,const Matrix4x4& viewportMatrix, int color);
+extern void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, int color);
 
 
+
+#pragma region 当たり判定
 
 /// <summary>
 /// Hit Box Crash Decision
@@ -83,7 +91,7 @@ int crashDecisionCircleBool(float XA, float YA, float RA, float XB, float YB, fl
 /// <param name="velocity2">Circle 2 velocity</param>
 /// <param name="mass2">Circle 2 mass</param>
 /// <param name="restitution"> restitution </param>
-void calculateCollision(Vector2& pos1, Vector2& velocity1,float mass1, Vector2& pos2, Vector2& velocity2, float mass2, float restitution);
+void calculateCollision(Vector2& pos1, Vector2& velocity1, float mass1, Vector2& pos2, Vector2& velocity2, float mass2, float restitution);
 
 
 /// <summary>
@@ -116,7 +124,7 @@ void crashBorder(float* x, float* y, float w, float h, int lx, int rx, int ty);
 /// <param name="s1">Sphere1</param>
 /// <param name="s2">Sphere2</param>
 /// <returns>isHit</returns>
-bool crashDecision(const Sphere& s1,const Sphere& s2);
+bool crashDecision(const Sphere& s1, const Sphere& s2);
 
 /// <summary>
 /// Ball(Sphere) & Plane Hit Decision
@@ -124,7 +132,7 @@ bool crashDecision(const Sphere& s1,const Sphere& s2);
 /// <param name="s1">Sphere</param>
 /// <param name="s2">Plane</param>
 /// <returns>isHit</returns>
-bool crashDecision(const Sphere& s1,const Plane& s2);
+bool crashDecision(const Sphere& s1, const Plane& s2);
 
 /// <summary>
 /// Segment & Plane Hit Decision
@@ -132,7 +140,7 @@ bool crashDecision(const Sphere& s1,const Plane& s2);
 /// <param name="s1">Segment</param>
 /// <param name="s2">Plane</param>
 /// <returns>isHit</returns>
-bool crashDecision(const Segment& segment,const Plane& plane);
+bool crashDecision(const Segment& segment, const Plane& plane);
 
 /// <summary>
 /// Segment & Triangle Hit Decision
@@ -140,7 +148,7 @@ bool crashDecision(const Segment& segment,const Plane& plane);
 /// <param name="s1">Segment</param>
 /// <param name="s2">Triangle</param>
 /// <returns>isHit</returns>
-bool crashDecision(const Segment& segment,const Triangle& triangle);
+bool crashDecision(const Segment& segment, const Triangle& triangle);
 
 /// <summary>
 /// AABB & AABB Hit Decision
@@ -148,7 +156,7 @@ bool crashDecision(const Segment& segment,const Triangle& triangle);
 /// <param name="s1">AABB1</param>
 /// <param name="s2">AABB2</param>
 /// <returns>isHit</returns>
-bool crashDecision(const AABB& aabb1,const AABB& aabb2);
+bool crashDecision(const AABB& aabb1, const AABB& aabb2);
 
 /// <summary>
 /// AABB & Sphere Hit Decision
@@ -156,7 +164,7 @@ bool crashDecision(const AABB& aabb1,const AABB& aabb2);
 /// <param name="s1">AABB</param>
 /// <param name="s2">Sphere</param>
 /// <returns>isHit</returns>
-bool crashDecision(const AABB& aabb1,const Sphere& sphere);
+bool crashDecision(const AABB& aabb1, const Sphere& sphere);
 
 /// <summary>
 /// AABB & Segment Hit Decision
@@ -164,4 +172,8 @@ bool crashDecision(const AABB& aabb1,const Sphere& sphere);
 /// <param name="s1">AABB</param>
 /// <param name="s2">Sphere</param>
 /// <returns>isHit</returns>
-bool crashDecision(const AABB& aabb1,const Segment& segment);
+bool crashDecision(const AABB& aabb1, const Segment& segment);
+
+#pragma endregion
+
+
