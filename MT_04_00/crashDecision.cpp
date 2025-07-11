@@ -276,3 +276,5 @@ bool crashDecision(const AABB& a, const Segment& segment) {
 	return tmin <= tmax;
 }
 
+
+

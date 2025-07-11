@@ -58,6 +58,27 @@ Vector3 Vector3::operator/(const Vector3& target) {
 	return { x / target.x, y / target.y, z / target.z };
 }
 
+Vector3& Vector3::operator+=(const Vector3& target) {
+	x += target.x;
+	y += target.y; 
+	z += target.z;
+	return *this;
+}
+
+Vector3& Vector3::operator-=(const Vector3& target) {
+	x -= target.x;
+	y -= target.y;
+	z -= target.z;
+	return *this;
+}
+
+Vector3& Vector3::operator/=(const Vector3& target) {
+	x /= target.x;
+	y /= target.y;
+	z /= target.z;
+	return *this;
+}
+
 Vector3 Vector3::operator*(const float& target) {
 	return { x * target, y * target, z * target };
 }
@@ -1130,6 +1151,12 @@ bool BinaryComparator(int binary, int target) {
 		return true;
 	}
 	return false;
+}
+
+Vector3 ReflectVector3(const Vector3& input, const Vector3& normal) {
+	Vector3 i = input;
+	Vector3 n = normal;
+	return  (i + Dot(i, n) * n * -2.0f);
 }
 
 Vector3 uniformCircularMotion(Vector3 center, float radius, float time, float maxtime, CircleMotionPlane plane) {

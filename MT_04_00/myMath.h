@@ -38,14 +38,21 @@ typedef struct Vector3 {
 	///演算子再定義
 	Vector3 operator+(const Vector3& target);
 	Vector3 operator-(const Vector3& target);
+	// 内積
 	Vector3 operator*(const Vector3& target);
 	Vector3 operator/(const Vector3& target);
+	Vector3& operator+=(const Vector3& target);
+	Vector3& operator-=(const Vector3& target);
+	Vector3& operator/=(const Vector3& target);
+	// 内積
 	Vector3 operator*(const float& target);
 	friend Vector3 operator*(float scalar, const Vector3& vec);
 	Vector3 operator/(const float& target);
 
 	///int
+	// 内積
 	Vector3 operator*(const int& target);
+	// 内積
 	friend Vector3 operator*(int scalar, const Vector3& vec);
 
 	///ヘルム
@@ -527,6 +534,15 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 /// <param name="target">目標</param>
 /// <returns>=ならtrue</returns>
 bool BinaryComparator(int binary, int target);
+
+/// <summary>
+/// Vector3 反射計算
+/// </summary>
+/// <param name="input"></param>
+/// <param name="normal"></param>
+/// <returns></returns>
+Vector3 ReflectVector3(const Vector3& input, const Vector3& normal);
+
 
 enum CircleMotionPlane {
 	XY, //<<< XY平面
