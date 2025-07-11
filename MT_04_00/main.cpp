@@ -29,19 +29,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 初期化
 	///=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
-	/// 回転設定
-	Vector3 center = { 0.0f,0.0f,0.0f };
-	float radius = 0.8f;///回転半径
-	int eachCircleTime = 2;///1周するのにかかる時間(秒)
+	/// 円錐の設定
+	ConicalPendulum conicalPendulum;
+	conicalPendulum.anchor = { 0.0f, 1.0f, 0.0f };///円錐の頂点位置
+	conicalPendulum.length = 0.8f;
+	conicalPendulum.halfApexAngle = 0.7f;///円錐の頂点位置
+	conicalPendulum.angle = 0.0f;///円錐の頂点位置
+	conicalPendulum.angularVelocity = 0.0f;///円錐の頂点位置
 
 	/// Sphere
-	Sphere ball;
-	ball.center = { radius, 0.0f, 0.0f };
+	Ball ball{};
+	ball.position = { 1.2f, 0.0f, 0.0f };
+	ball.mass = 2.0f;
 	ball.radius = 0.05f;
+	ball.color = BLUE;
 
-	/// Time
-	int time = 0;
-	int maxTime = 60 * eachCircleTime;
+	conicalPendulum.end.acceleration = ball.acceleration;
+	conicalPendulum.end.color = ball.color;
+	conicalPendulum.end.mass = ball.mass;
+	conicalPendulum.end.position = ball.position;
+	conicalPendulum.end.velocity = ball.velocity;
+
 
 	///カメラ初期化
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
@@ -90,11 +98,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cameraWorldViewProjectionMatrix = cameraViewMatrix * cameraProjectionMatrix;
 		cameraViewportMatrix = MakeViewportMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		/// Timer更新処理
-		if (time == maxTime) { time = 0; } else { time++; }
-
-		/// bollの回転処理
-		ball.center = ball.center + uniformCircularMotion(center, radius, float(time),float(maxTime), XY);
+		/// ballの更新処理
+		conicalPendulumUpdate(&conicalPendulum);
+		ball.acceleration = conicalPendulum.end.acceleration;
+		ball.mass = conicalPendulum.end.mass;
+		ball.position = conicalPendulum.end.position;
+		ball.velocity = conicalPendulum.end.velocity;
 
 		///=========================================================================================================================================================================================
 		/// 描画処理
@@ -104,7 +113,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(cameraWorldViewProjectionMatrix, cameraViewportMatrix);
 
 		/// DrawSpring
-		DrawSphere({ ball.center, ball.radius }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
+		Draw3DLine({ conicalPendulum.anchor,conicalPendulum.end.position - conicalPendulum.anchor }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
+		DrawSphere({ ball.position, ball.radius }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, ball.color);
 
 		/// ImGui
 		ImGui::Begin("Control Penol");
@@ -112,8 +122,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::SliderFloat3("center", &center.x, 0.0f, 2.0f);
 		//ImGui::SliderFloat("Radius", &radius, 0.0f, 2.0f);
 		if (ImGui::Button("Start")) {
-			ball.center = { radius, 0.0f, 0.0f };
-			time = 0;
+			conicalPendulum.angle = 0.0f;
 		}
 		ImGui::End();
 

@@ -18,3 +18,14 @@ void springUpdate(Spring* spring) {
     spring->end.position = spring->end.position + spring->end.velocity * deltaTime;
 
 }
+
+void conicalPendulumUpdate(ConicalPendulum* pendulum) {
+    pendulum->angularVelocity = std::sqrt(9.8f / (pendulum->length * std::cos(pendulum->halfApexAngle)));
+    pendulum->angle += pendulum->angularVelocity * deltaTime;
+
+    float radius = std::sin(pendulum->halfApexAngle) * pendulum->length;
+    float height = std::cos(pendulum->halfApexAngle) * pendulum->length;
+    pendulum->end.position.x = pendulum->anchor.x + std::cos(pendulum->angle) * radius;
+    pendulum->end.position.y = pendulum->anchor.y - height;
+    pendulum->end.position.z = pendulum->anchor.z - std::sin(pendulum->angle) * radius;
+}
