@@ -22,7 +22,7 @@ struct Spring {
 
 struct Pendulum {
     Vector3 anchor;                // アンカーポイント。固定された端の位置
-    PhysicalObject end; // バネの片端の物体
+    PhysicalObject end;            // バネの片端の物体
     float length;                  // 紐の長さ
     float angle;                   // 現在の角度
     float angularVelocity;         // 角速度
@@ -44,10 +44,13 @@ struct Ball:PhysicalObject {
     float radius;           // ボールの半径
 };
 
-/// 更新予定:Vector3の力を足して、バネを引っ張るのも計算できるようになること
+/// 更新予定:出力をVector3に変更、よって計算の操作性をより高まる
 void springUpdate(Spring* spring);
 
+/// 更新予定:出力をVector3に変更、よって計算の操作性をより高まる
+/// やり方:今の一から原点との角度を求め、現在角度と加速度から最高角速度を求め、更新する
+Vector3 PendulumUpdate(Pendulum* pendulum);
 
-/// 更新予定:円錐振り子の角度を更新し、位置を計算する
+/// 更新予定:出力をVector3に変更、よって計算の操作性をより高まる
 void conicalPendulumUpdate(ConicalPendulum* pendulum);
 

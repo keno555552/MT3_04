@@ -14,9 +14,25 @@ void springUpdate(Spring* spring) {
     }
     // 加速度や速度のどちらも秒を基準として計算する
     // それが、1/60秒間(deltaTime)適用されたと考える
+    /// ここ変わる
     spring->end.velocity = spring->end.velocity + spring->end.acceleration * deltaTime;
     spring->end.position = spring->end.position + spring->end.velocity * deltaTime;
 
+}
+
+Vector3 PendulumUpdate(Pendulum* pendulum) {
+    pendulum->angularAcceleration =
+        -(9.8f / pendulum->length) * std::sin(pendulum->angle);
+    pendulum->angularVelocity += pendulum->angularAcceleration * deltaTime;
+    pendulum->angle += pendulum->angularVelocity * deltaTime;
+
+    // pは振り子の先端の位置。取り付けたいものを取り付ければ良い
+    Vector3 result = {};
+    result.x = pendulum->anchor.x + std::sin(pendulum->angle) * pendulum->length;
+    result.y = pendulum->anchor.y - std::cos(pendulum->angle) * pendulum->length;
+    result.z = pendulum->anchor.z;
+
+    return result;
 }
 
 void conicalPendulumUpdate(ConicalPendulum* pendulum) {

@@ -100,10 +100,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cameraViewportMatrix = MakeViewportMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 		/// ballの更新処理
-		ball.acceleration = pendulum.end.acceleration;
-		ball.mass =			pendulum.end.mass;
-		ball.position =		pendulum.end.position;
-		ball.velocity =		pendulum.end.velocity;
+		pendulum.end.position = PendulumUpdate(&pendulum);
+
+		ball.position =	pendulum.end.position;
 
 		///=========================================================================================================================================================================================
 		/// 描画処理
@@ -122,7 +121,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::SliderFloat3("center", &center.x, 0.0f, 2.0f);
 		//ImGui::SliderFloat("Radius", &radius, 0.0f, 2.0f);
 		if (ImGui::Button("Start")) {
-			pendulum.angle = 0.0f;
+			pendulum.angle = 0.7f;
+			pendulum.angularVelocity = 0.0f;
 		}
 		ImGui::End();
 
