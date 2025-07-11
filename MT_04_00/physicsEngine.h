@@ -20,6 +20,15 @@ struct Spring {
 	float dampingCoefficient; //減衰係数
 };
 
+struct Pendulum {
+    Vector3 anchor;                // アンカーポイント。固定された端の位置
+    PhysicalObject end; // バネの片端の物体
+    float length;                  // 紐の長さ
+    float angle;                   // 現在の角度
+    float angularVelocity;         // 角速度
+    float angularAcceleration;     // 角加速度
+};
+
 struct ConicalPendulum{
     Vector3 anchor; // 支点の位置
     PhysicalObject end; // バネの片端の物体
@@ -38,5 +47,7 @@ struct Ball:PhysicalObject {
 /// 更新予定:Vector3の力を足して、バネを引っ張るのも計算できるようになること
 void springUpdate(Spring* spring);
 
+
+/// 更新予定:円錐振り子の角度を更新し、位置を計算する
 void conicalPendulumUpdate(ConicalPendulum* pendulum);
 
