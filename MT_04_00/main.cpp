@@ -29,19 +29,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 初期化
 	///=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
-	/// Plane
-	Plane plane;
-	plane.normal = Normalize({ -0.2f,0.9f,-0.3f });
-	plane.distance = 0.0f;
+	/// 円錐の設定
+	Pendulum pendulum;
+	pendulum.anchor = { 0.0f, 1.0f, 0.0f };
+	pendulum.length = 0.8f;
+	pendulum.angle = 0.7f;
+	pendulum.angularVelocity = 0.0f;
+	pendulum.angularAcceleration = 0.0f;
+
 
 	/// Sphere
 	Ball ball{};
-	ball.position = { 0.8f, 1.2f, 0.3f };
+	ball.position = { 1.2f, 0.0f, 0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
-	ball.color = WHITE;
-	ball.acceleration = { 0.0f, -9.8f, 0.0f }; // 重力加速度
+	ball.color = BLUE;
 
+	pendulum.end.acceleration = ball.acceleration;
+	pendulum.end.color = ball.color;
+	pendulum.end.mass = ball.mass;
+	pendulum.end.position = ball.position;
+	pendulum.end.velocity = ball.velocity;
 
 
 	///カメラ初期化
@@ -92,22 +100,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cameraViewportMatrix = MakeViewportMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 		/// ballの更新処理
-		if (ball.velocity.y < 9.8f) {
-			ball.velocity += ball.acceleration * deltaTime;
-		} else {
-			ball.velocity = ball.acceleration;
-		}
-		{
-			int crashCount = 200;
-			for (int i = 0; i < crashCount; i++) {
-				ball.position += ball.velocity * deltaTime / float(crashCount);
-				if (crashDecision(Sphere{ ball.position, ball.radius }, plane)) {
-					Reflect(&ball, &plane);
-					ball.position += ball.velocity * deltaTime / float(crashCount);
-					break;
-				}
-			}
-		}
+		pendulum.end.position = PendulumUpdate(&pendulum);
+
+		ball.position = pendulum.end.position;
 
 		///=========================================================================================================================================================================================
 		/// 描画処理
@@ -117,7 +112,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(cameraWorldViewProjectionMatrix, cameraViewportMatrix);
 
 		/// DrawSpring
-		DrawPlane(plane, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
+		Draw3DLine({ pendulum.anchor,pendulum.end.position - pendulum.anchor }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, WHITE);
 		DrawSphere({ ball.position, ball.radius }, cameraWorldViewProjectionMatrix, cameraViewportMatrix, ball.color);
 
 		/// ImGui
@@ -126,8 +121,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::SliderFloat3("center", &center.x, 0.0f, 2.0f);
 		//ImGui::SliderFloat("Radius", &radius, 0.0f, 2.0f);
 		if (ImGui::Button("Start")) {
-			ball.position = { 0.8f, 1.2f, 0.3f };
-			ball.velocity = { 0.0f, 0.0f, 0.0f };
+			pendulum.angle = 0.7f;
+			pendulum.angularVelocity = 0.0f;
 		}
 		ImGui::End();
 
